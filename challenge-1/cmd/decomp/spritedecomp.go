@@ -2,7 +2,6 @@ package decomp
 
 import (
 	"errors"
-	"fmt"
 	// "fmt"
 	"log"
 )
@@ -49,7 +48,7 @@ func (b *BitstreamReader) readBit() (uint8, error) {
 		bit := (b.currentByte & 0x80) >> 7
 		b.currentByte <<= 1
 		b.bitPosition++
-		//log.Printf("bit = %d, b.currentByte = 0x%02x, b.bitPosition = %d", bit, b.currentByte, b.bitPosition)
+		//log.Printf("previousByte = 0x%02x, bit = %d, b.currentByte = 0x%02x, b.bitPosition = %d", previousByte, bit, b.currentByte, b.bitPosition)
 		return bit, nil
 	} else {
 		b.bitPosition = 0;
@@ -67,7 +66,9 @@ func (b *BitstreamReader) readBits(numBits int) (int, error) {
 		}
 		result <<= 1
 		result |= int(bit)
+		//log.Printf("result = %b %d", result, result)
 	}
+	//log.Printf("---")
 	return result, nil
 }
 
@@ -91,6 +92,13 @@ func RecordDecompressSprite(rom []byte, spritePtr, baseDataWidth, baseDataHeight
 	handle(err)
 	log.Printf("Sprite size is %dx%d\n", widthTiles, heightTiles)
 	
+	if baseDataWidth < 0 {
+		baseDataWidth = widthTiles
+	}
+	if baseDataHeight < 0 {
+		baseDataHeight = heightTiles
+	}
+	
 	firstBuffer, err := spriteReader.readBit()
 	handle(err)
 	firstBuffer++
@@ -109,7 +117,7 @@ func RecordDecompressSprite(rom []byte, spritePtr, baseDataWidth, baseDataHeight
 	
 	for i := 0; i < 2; i++ {
 		if i == 1 {
-			decodeMode, err := spriteReader.readBit()
+			decodeMode, err = spriteReader.readBit()
 			handle(err)
 			if decodeMode == 1 {
 				decodeMode <<= 1
@@ -119,20 +127,21 @@ func RecordDecompressSprite(rom []byte, spritePtr, baseDataWidth, baseDataHeight
 			}
 		}
 		
-		log.Printf("Decompressing plane %d...\n", i)
+		log.Printf("Decompressing plane %d into BP%d...\n", i, int(bufferOrder[i]))
 		recording.decompressPlane(&spriteReader, heightTiles, widthTiles, int(bufferOrder[i]))
 	}
 	
 	log.Printf("Using decode mode %d\n", decodeMode)
 	
+	
 	switch decodeMode {
 	case 0:
 		recording.deltaDecode(heightTiles, widthTiles, 1)
 		recording.deltaDecode(heightTiles, widthTiles, 2)
-	case 1:
+	case 2:
 		recording.deltaDecode(heightTiles, widthTiles, int(firstBuffer))
 		recording.xorBuffers(heightTiles, widthTiles, int(firstBuffer), int(secondBuffer))
-	case 2:
+	case 3:
 		recording.deltaDecode(heightTiles, widthTiles, int(secondBuffer))
 		recording.deltaDecode(heightTiles, widthTiles, int(firstBuffer))
 		recording.xorBuffers(heightTiles, widthTiles, int(firstBuffer), int(secondBuffer))
@@ -289,7 +298,7 @@ func (r *RecordedDecompression) decompressPlane(spriteReader *BitstreamReader,
 	totalOffset := rowCount * columnCount
 	outputRowIdx := uint16(0)
 	outputColumnIdx := uint16(0)
-	var outputOffset uint16
+	outputOffset := uint16(0)
 	
 	currentMode, err := spriteReader.readBit()
 	handle(err)
@@ -298,7 +307,7 @@ func (r *RecordedDecompression) decompressPlane(spriteReader *BitstreamReader,
 		currentMode = 1
 	}
 	
-	for outputOffset = 0; outputOffset < totalOffset; {
+	for ; outputOffset < totalOffset; {
 		if currentMode == 0 {
 			readRLEPacket(spriteReader, &outputOffset, &outputRowIdx, &outputColumnIdx, rowCount)
 			currentMode = 1
@@ -315,6 +324,7 @@ func (r *RecordedDecompression) decompressPlane(spriteReader *BitstreamReader,
 				Mask: 0xc0 >> ((outputColumnIdx % 4) * 2),
 				Value: uint8(code) << (6 - ((outputColumnIdx % 4) * 2)),
 			})
+			//log.Println(r.Operations[len(r.Operations) - 1], outputRowIdx, outputColumnIdx, rowCount)
 			outputOffset++
 			outputRowIdx, outputColumnIdx = recalcRowColumnIdx(outputOffset, rowCount)
 		}
@@ -362,16 +372,17 @@ func readExpGolombNumber(reader *BitstreamReader) (int, error) {
 	var err error
 	// assume
 	bit = 1
-	result = 1
+	result = 0
 	for ; bit == 1; {
 		bit, err = reader.readBit()
 		if err != nil {
 			return 0, err
 		}
 		result <<= 1
+		result |= int(bit)
 		numBitsToRead++
 	}
-	result -= 1
+	result += 1
 	offset, err := reader.readBits(numBitsToRead)
 	if err != nil {
 		return 0, err

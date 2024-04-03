@@ -17,6 +17,7 @@ func (r *RecordedDecompression) UndoRecording(destMemory *[]byte) (unknownBitMap
 			operation.MarkFill(unknownBitMap)
 		case Or:
 			operation.MarkOr(unknownBitMap)
+			operation.UndoOr(destMemory)
 		case DCopy:
 			operation.UndoDataCopy(destMemory)
 		case DXor:
@@ -31,6 +32,10 @@ func (r *RecordedDecompression) UndoRecording(destMemory *[]byte) (unknownBitMap
 
 func (o Operation) MarkOr(unknownBitMap *[]byte) {
 	(*unknownBitMap)[o.DestAddr] |= o.Value & o.Mask
+}
+
+func (o Operation) UndoOr(destMemory *[]byte) {
+	(*destMemory)[o.DestAddr] ^= o.Value & o.Mask
 }
 
 func (o Operation) MarkFill(unknownBitMap *[]byte) {

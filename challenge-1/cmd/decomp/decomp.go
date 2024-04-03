@@ -1,6 +1,13 @@
 package decomp
 
+import (
+	"log"
+)
+
 func (r *RecordedDecompression) ApplyRecording(destMemory *[]byte) {
+	
+	log.Println("Applying recorded decompression journal over saved data...")
+	
 	var integrator uint8
 	for _, operation := range r.Operations {
 		switch (operation.T) {
