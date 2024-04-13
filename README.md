@@ -4,10 +4,9 @@ This repository contains the source code and write-ups for Kagamiin's solutions 
 
 ## Write-ups for each challenge
 
-NOTE: I was only able to complete challenges 1, 2 and 4. I was unfortunately unable to complete challenge 3.
-
 - [Hacking Challenge I - Hall of Fame Data Recovery (Red/Blue)](/challenge-1/README.md)
 - [Hacking Challenge II - The Sus-file (Crystal)](/challenge-2/README.md)
+- [Hacking Challenge III - gbhttp](/challenge-3/README.md)
 - [Hacking Challenge IV - Pokémon Write-What-Where Version (Emerald)](/challenge-4/README.md)
 
 ## Usage
