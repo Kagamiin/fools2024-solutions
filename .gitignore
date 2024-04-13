@@ -1,0 +1,7 @@
+*.gb
+*.bin
+*.sav
+*.lua
+*.asm
+*.o
+*.sym
