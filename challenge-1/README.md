@@ -85,7 +85,12 @@ The post-processing step consists of a few of sub-steps which depend on the sele
 
 XOR decoding consists in literally performing the exclusive OR of bitplanes 1 and 2, and storing it in bitplane 2. Reversing the XOR operation primitive is straightforward, as it simply means executing it again. There's not too much else to explain.
 
-Delta decoding, or more specifically, binary delta decoding, is a method used to encode areas of flat color in the image in order to maximize the number of zero bits - which 
+Delta decoding, or more specifically, binary delta decoding, is a method used to encode areas of flat color in the image in order to maximize the number of zero bits - which as explained before, improves the compression ratio for zero-RLE. It works by essentially integrating the bitstream:
+
+```
+Original bitstream:      000100011100010010001000010
+Delta-decoded bitstream: 000111101000011100001111100
+```
 
 For reversing the delta decode primitive, however, I had to implement a "lookahead" (actually behind) differentiator which required me to not only reference the current byte, but the previous byte for the edge case.
 
