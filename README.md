@@ -33,7 +33,7 @@ It was my first CTF ever, after all. It's to be expected. I wasn't so prepared f
 
 Nevertheless, I had a lot of fun chatting with people in the #aprilfools24 channel over at the GCRI Discord, sharing thoughts and tips, supporting each other. Everybody was really cool there and the competition was very healthy. I was very happy to see this.
 
-There was also a second challenge (Fight Simulation Program) consisting of a fangame where you had to earn achievements in order to gain points on the scoreboard, which comprised the majority of the points you could earn on the leaderboard. I didn't have time for it and was honestly not very interested in it, but from what people said about it it's a very interesting game with lots of funny references to Pokémon glitch science. I might play it later, after the challenge is done, just for funsies.
+There was also a second challenge (Fight Simulation Program) consisting of a fangame where you had to earn achievements in order to gain points on the scoreboard, which comprised the majority of the points you could earn on the leaderboard. It's a very interesting and well-made game with lots of funny references to Pokémon glitch science. I did play it after I was done with the CTF challenges, and I'd definitely recommend everybody go try it out too, even after the leaderboards aren't up anymore.
 
 ## Licensing
 
