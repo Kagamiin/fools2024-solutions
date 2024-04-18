@@ -35,6 +35,14 @@ Nevertheless, I had a lot of fun chatting with people in the #aprilfools24 chann
 
 There was also a second challenge (Fight Simulation Program) consisting of a fangame where you had to earn achievements in order to gain points on the scoreboard, which comprised the majority of the points you could earn on the leaderboard. It's a very interesting and well-made game with lots of funny references to Pokémon glitch science. I did play it after I was done with the CTF challenges, and I'd definitely recommend everybody go try it out too, even after the leaderboards aren't up anymore.
 
+## Greetings
+
+- To TheZZAZZGlitch, for being so awesome, for hosting these challenges, for all of your glitch research, for all of your content everywhere, for everything!
+- To pret, for all of your research and disassemblies, without which my work wouldn't be possible!
+- To GCRI, for being such a wholesome glitch science community! Love y'all!
+- To the GBDev and mGBA communities!
+- And everybody who supported me during these 16 days of pure madness!
+
 ## Licensing
 
 I hereby release the code for my solutions, as well as their documentation (write-ups), under the GNU General Public License v3.

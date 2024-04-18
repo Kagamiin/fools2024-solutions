@@ -11,6 +11,34 @@ In this challenge, we had to recover a payload that had been corrupted by [Missi
 
 In short, I wrote a very special Gen 1 sprite decompressor - a journalling one. It works by first running the decompression, but not writing any data to the destination memory region - it instead writes a journal of the operations performed. This journal is then read in reverse, from the end to the beginning, and the operations are undone on the corrupted memory region, bringing it back to the uncorrupted state - or at least, uncorrupted enough that the data of interest is readable, as we'll see below.
 
+## Initial analysis
+
+_**NOTE:** This part was added in 2024-04-18, one day after this write-up's initial release._
+
+Upon loading the save file, the first thing we can notice is the player's name, `Mattiaᴾₖ`. Further analysis of the save file shows us that the rival name is `ROSSO`, and that there are some suspiciously Italian-sounding Pokémon nicknames in Box 12 of the save file:
+
+<p align=center>
+  <img src="docs/mem1.png">
+</p>
+
+<p align=center>
+  <img src="docs/mem2.png">
+</p>
+
+This led to a theory around the GCRI Discord that the challenge was to be done on the Italian version of the game - after all, MattiaPk could be a reference to Mattia Cognetta, the winner of the 2023 Pokémon Europe International Championship's Video Game Senior Division. This was quickly disproven by simply trying to load the save on the Italian version of the game and trying to encounter Missingno. - the game crashes on a black screen before the battle even loads.
+
+By tracing through the decompression process, the reason becomes apparent - the sprite is so, so large that the decompression routine overwrites the entirety of RAM and HRAM, wraps around the address space and even tries to write data into ROM, which of course does nothing. After the decompression process finishes, the stack pointer has been trashed and the game returns to a random address, which may or may not point to valid code, and ultimately ends up crashing. So the payload containing the flag would have been completely gone by the time Italian Missingno. was done overwriting the game's memory.
+
+There's also something really fishy about the Pokémon nicknames in the save file. Right above the Pokémon nicknames in the screenshot you can see the section of memory that holds the OT names for the Pokémon. Notice how all of their OTs only have a single character - `0x5D` - and you can barely spot it. Well, what's character `0x5D` in the Pokémon character set, you might ask? I'll tell you right away - it's not part of the character set, but of the current map's tileset. (note: the garbage at the bottom is not part of the tileset, but the tilemap represented as if it were graphic characters)
+
+<p align=center>
+  <img src="docs/tile5d.png">
+</p>
+
+So, these Pokémon were very likely hacked in somehow! This is a very clever red herring.
+
+What does this all mean, after all? There's no way that this challenge could have been done on the Italian version of the game. So back to the English version it was.
+
 ## A primer on Gen 1 sprite decompression
 
 Pokémon Gen 1 is unique amongst retro games for its intricate sprite decompression algorithm, which has characteristics that set it apart from other compression algorithms from other games of the era, such as working down at the bit level, using bit-pair encoding, delta encoding, and most notably the use of Exp-Golomb encoding (which is still in use in modern video codecs). I shall go over some of the aspects of Pokémon Gen 1 sprite decompression and explain how we'll need to deal with them when trying to recover the data.
