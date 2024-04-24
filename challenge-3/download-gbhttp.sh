@@ -1,2 +1,2 @@
 #!/bin/sh
-curl https://fools2024.online/assets/gbhttp.asm
+curl https://github.com/zzazzdzz/fools2024/raw/main/hack_challs/files/gbhttp.asm

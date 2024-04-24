@@ -21,9 +21,9 @@ To use this repository, you'll likely need the following tools and assets:
   - Pokémon Crystal (Game Boy Color, English)
   - Pokémon Emerald (Game Boy Advance, English)
 
-Each folder includes a small downloader script that will download the original challenge asset file from the fools2024 server, using **curl**. This is necessary because the assets cannot be embedded in this repository as their licensing status is dubious at best at the moment.
+Each folder includes a small downloader script that will download the original challenge asset file from [zzazzdzz's fools2024 Git repository](https://github.com/zzazzdzz/fools2024), using **curl**. I am not embedding the assets here because I want to keep this repository under a single license.
 
-The challenge asset files may be needed in order to use the solution code to their fullest extent, though they aren't necessarily needed in order to understand the code or even run it (you may create and provide your own wherever needed).
+The challenge asset files are © TheZZAZZGlitch 2024 and are licensed under the MIT license. They may be needed in order to use the solution code to their fullest extent, though they aren't necessarily needed in order to understand the code or even run it.
 
 ## My thoughts on the challenge
 
