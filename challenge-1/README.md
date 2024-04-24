@@ -15,6 +15,8 @@ In short, I wrote a very special Gen 1 sprite decompressor - a journalling one. 
 
 _**NOTE:** This part was added in 2024-04-18, one day after this write-up's initial release._
 
+_Updated in 2024-04-24 - fixed some factual mistakes._
+
 Upon loading the save file, the first thing we can notice is the player's name, `Mattiaᴾₖ`. Further analysis of the save file shows us that the rival name is `ROSSO`, and that there are some suspiciously Italian-sounding Pokémon nicknames in Box 12 of the save file:
 
 <p align=center>
@@ -27,7 +29,7 @@ Upon loading the save file, the first thing we can notice is the player's name, 
 
 This led to a theory around the GCRI Discord that the challenge was to be done on the Italian version of the game - after all, MattiaPk could be a reference to Mattia Cognetta, the winner of the 2023 Pokémon Europe International Championship's Video Game Senior Division. This was quickly disproven by simply trying to load the save on the Italian version of the game and trying to encounter Missingno. - the game crashes on a black screen before the battle even loads.
 
-By tracing through the decompression process, the reason becomes apparent - the sprite is so, so large that the decompression routine overwrites the entirety of RAM and HRAM, wraps around the address space and even tries to write data into ROM, which of course does nothing. After the decompression process finishes, the stack pointer has been trashed and the game returns to a random address, which may or may not point to valid code, and ultimately ends up crashing. So the payload containing the flag would have been completely gone by the time Italian Missingno. was done overwriting the game's memory.
+By tracing through the decompression process, the reason becomes apparent - Italian Missingno's dimensions in the Pokémon data structure, unlike in its compressed sprite data, is 0x0. This causes the game to try to overwrite almost the entire game's SRAM and RAM with garbage. It is stopped short, however, by the VBlank interrupt, after the sound bank address (`0xC0EF`) is overwritten with the value `0xEA` taken from ROM, mapping to bank `0x3A` which is fully padded with `0x00` bytes. When the game tries to execute sound code from this bank, it falls into a NOP sled straight into VRAM, ultimately executing an rst 38 instruction due to VRAM inaccessibility and crashing.
 
 There's also something really fishy about the Pokémon nicknames in the save file. Right above the Pokémon nicknames in the screenshot you can see the section of memory that holds the OT names for the Pokémon. Notice how all of their OTs only have a single character - `0x5D` - and you can barely spot it. Well, what's character `0x5D` in the Pokémon character set, you might ask? I'll tell you right away - it's not part of the character set, but of the current map's tileset. (note: the garbage at the bottom is not part of the tileset, but the tilemap represented as if it were graphic characters)
 
@@ -124,15 +126,17 @@ For reversing the delta decode primitive, however, I had to implement a "lookahe
 
 ### Copying/aligning sprite data
 
+_Updated in 2024-04-24 - fixed some factual mistakes._
+
 In this last step, the game copies bitplanes 1 and 2 to bitplanes 0 and 1, while aligning them to a 7x7 bounding box, which is what the game always uses for displaying sprites. The decompression is always performed at the sprite's native size, while this last step is used to position the sprite's byte columns in place on the 7x7 bounding box.
 
 This of course goes horribly wrong when the sprite's dimensions are bigger than 7x7 (or smaller than 1x1). The buffer overflows and the algorithm ends up overwriting data out of bounds.
 
 One interesting thing to point out about this step is that it is technically not part of the compression algorithm, but of the sprite loading routine. As such, it doesn't use the sprite size byte from the sprite's bitstream, but a different sprite size byte taken from elsewhere. For glitch sprites, these can be (and usually are) different; for Missingno, this second size byte is 8x8 tiles - smaller than the initial sprite size.
 
-Another lucky factor for us is that the copy start position is reset and advanced by a fixed amount for every column, due to how the routine is designed to align sprites. Specifically, the column start position only advances by 49 bytes for every copied column, no matter the size of each copied column. This means that the data for the next copied column may overwrite part of the data from the last column, but that doesn't matter for us, as all we care about is that the data at 0xA7D0 is preserved.
+Another lucky factor for us is that the copy start position is reset and advanced by a fixed amount for every column, due to how the routine is designed to align sprites. Specifically, the column start position only advances by 56 bytes for every copied column, no matter the size of each copied column. This means that the data for the next copied column may overwrite part of the data from the last column, but that doesn't matter for us, as all we care about is that the data at `0xA7D0` is preserved.
 
-A quick calculation shows us that the max offset achieved by the copy/align routine when aligning Missingno.'s sprite is `49*7 + 8*8 = 407 bytes`, and the starting position for Missingno.'s sprite is 248 bytes in, so using bitplane 1 to maximize the achievable memory address we get 0xA417. Pretty safe from 0xA7D0.
+A quick calculation shows us that the max offset achieved by the copy/align routine when aligning Missingno.'s sprite is `56*7 + 8*8 = 456 bytes`, and the starting position for Missingno.'s sprite is 248 bytes in, so using bitplane 1 to maximize the achievable memory address we get `0xA448`. Pretty safe from `0xA7D0`.
 
 I still ended up trying to undo this operation anyway. I don't think it would have been very effective if it actually mattered. It's pretty lossy.
 
