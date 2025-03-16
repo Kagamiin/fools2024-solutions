@@ -49,4 +49,4 @@ There was also a second challenge (Fight Simulation Program) consisting of a fan
 
 I hereby release the code for my solutions, as well as their documentation (write-ups), under the [GNU General Public License v3-or-later](https://github.com/Kagamiin/ssdpcm/blob/main/COPYING) (also available online, [here](https://www.gnu.org/licenses/gpl-3.0.html)).
 
-This file (main README.md at the root of the repository), however, is openly licensed via (CC0)[https://creativecommons.org/publicdomain/zero/1.0/].
+This file (main README.md at the root of the repository), however, is openly licensed via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
