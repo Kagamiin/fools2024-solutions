@@ -45,8 +45,22 @@ There was also a second challenge (Fight Simulation Program) consisting of a fan
 
 ## Licensing
 
-(C) 2024-2025 Kagamiin~
+(C) 2024 Kagamiin~
 
-I hereby release the code for my solutions, as well as their documentation (write-ups), under the [GNU General Public License v3-or-later](https://github.com/Kagamiin/ssdpcm/blob/main/COPYING) (also available online, [here](https://www.gnu.org/licenses/gpl-3.0.html)).
+I hereby release the code for my solutions, as well as their documentation (write-ups; see exceptions below), under the [GNU General Public License v3-or-later](https://github.com/Kagamiin/ssdpcm/blob/main/COPYING) (also available online, [here](https://www.gnu.org/licenses/gpl-3.0.html)).
 
-This file (main README.md at the root of the repository), however, is openly licensed via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
+The current document, however, is openly licensed via [CC0](https://creativecommons.org/publicdomain/zero/1.0/).
+
+### Exceptions
+
+The following files are part of the repository's documentation, but are derivative works of material not owned by the repository's copyright holder (Kagamiin~). Such files are not covered by the GNU GPL v3-or-later license and the rights to the original material are (C) 1996, 1998, 2000-2001, 2004-2005 GAMEFREAK inc. and reserved by their respective owners.
+
+Such content is used without permission from its copyright holders, but in good faith of it being fair use/fair dealing due to its purely demonstrative purposes:
+
+- challenge1/docs/flag1.png
+- challenge1/docs/tile5d.png
+- challenge2/docs/flag2.png
+- challenge2/docs/mapblocks.png
+- challenge2/docs/plaintext_flag.png
+- challenge2/docs/start.png
+- challenge4/docs/credits.png
